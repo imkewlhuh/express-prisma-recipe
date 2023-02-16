@@ -5,52 +5,50 @@ const router = express.Router();
 
 //GET all recipes sorted by each User
 router.get("/", async (_req, res) => {
-    const recipes = await prisma.recipe.findMany({
-        orderBy: {
-            userId: 'asc'
-        },
-        include: {
-            user: true
-        }
-    });
+    try {
+        const recipes = await prisma.recipe.findMany({
+            orderBy: {
+                userId: 'asc'
+            }
+        });
 
-    res.status(200).json({
-        success: true,
-        recipes
-    })
-});
-
-//POST new recipe under specified User
-router.post("/", async (req, res) => {
-    const newRecipe = await prisma.recipe.create({
-        data: {
-            name: req.body.name,
-            recipe: req.body.recipe,
-            userId: req.body.userId
-        }
-    });
-    
-    console.log(newRecipe);
-
-    res.status(201).json({
-        success: true
-    })
+        if (recipes) {
+            res.status(200).json({
+                success: true,
+                recipes
+            });
+        };
+    } catch (e) {
+        res.status(500).json({
+            success: false,
+            message: "Could not find recipes"
+        });
+    };
 });
 
 //GET one recipe by it's unique id
 router.get("/:recipeId", async (req, res) => {
     const id = req.params.recipeId;
 
-    const recipe = await prisma.recipe.findUniqueOrThrow({
-        where: {
-            id: parseInt(id)
-        }
-    })
+    try {
+        const recipe = await prisma.recipe.findFirstOrThrow({
+            where: {
+                id: parseInt(id)
+            }
+        });
 
-    res.status(200).json({
-        success: true,
-        recipe
-    })
+        if (recipe) {
+            res.status(200).json({
+                success: true,
+                recipe
+            });
+        };
+    } catch (e) {
+        res.status(500).json({
+            success: false,
+            message: "Could not find recipe"
+        });
+    };
 });
 
 export default router;
