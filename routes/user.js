@@ -3,6 +3,7 @@ import { prisma } from "../db/index.js";
 
 const router = express.Router();
 
+//GET all recipes belonging to current user
 router.get("/", async (req, res) => {
     try {
         const recipes = await prisma.recipe.findMany({
@@ -25,6 +26,7 @@ router.get("/", async (req, res) => {
     };
 });
 
+//POST new recipe assigned to current user
 router.post("/new", async (req, res) => {
     try {
         const newRecipe = await prisma.recipe.create({
@@ -48,6 +50,7 @@ router.post("/new", async (req, res) => {
     };
 });
 
+//PUT changes to a recipe belonging to current user
 router.put("/:recipeId", async (req, res) => {
     const id = req.params.recipeId;
 
@@ -89,6 +92,7 @@ router.put("/:recipeId", async (req, res) => {
     };
 });
 
+//DELETE a recipe belonging to current user
 router.delete("/:recipeId", async (req, res) => {
     const id = req.params.recipeId;
 
